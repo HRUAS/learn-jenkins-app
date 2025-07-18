@@ -22,7 +22,7 @@ pipeline {
         }
 
         stage('run Tests'){
-           parrallel{
+           parallel{
             stage('Test'){
             agent{
                 docker{
