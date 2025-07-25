@@ -4,12 +4,7 @@ pipeline {
         NETLIFY_SITE_ID = 'd04d85b1-a25f-43ca-a9ff-b21d32a04c64'
     }
     stages {
-        stage('Clean Workspace') {
-            steps {
-                cleanWs() // Clean the workspace before starting the build
-            }
-        }
-
+        
         stage('Build') {
             agent {
                 docker {
