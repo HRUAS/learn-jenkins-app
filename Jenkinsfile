@@ -19,7 +19,7 @@ pipeline {
                    ls -la
                    node --version
                    npm --version
-                   chown -R node:node /var/jenkins_home/workspace/learn-jenkins-2
+                   sudo chown -R node:node /var/jenkins_home/workspace/learn-jenkins-2
                    npm ci
                    npm run build
                    ls -la
