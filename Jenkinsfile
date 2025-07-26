@@ -12,6 +12,7 @@ pipeline {
                 docker {
                     image 'node:18-alpine'
                     reuseNode true
+                    retries 2 // Add retries to handle potential restarts
                 }
             }
             steps {
@@ -33,14 +34,15 @@ pipeline {
                         docker {
                             image 'node:18-alpine'
                             reuseNode true
+                            retries 2 // Add retries to handle potential restarts
                         }
                     }
                     steps {
                         sh '''
-                echo 'Test Stage'
-                test -f build/index.html
-                npm test
-                '''
+                           echo 'Test Stage'
+                           test -f build/index.html
+                           npm test
+                        '''
                     }
                     post {
                         always {
@@ -54,15 +56,16 @@ pipeline {
                         docker {
                             image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                             reuseNode true
+                            retries 2 // Add retries to handle potential restarts
                         }
                     }
                     steps {
                         sh '''
-                npm install serve
-                node_modules/.bin/serve -s build &
-                sleep 10
-                npx playwright test --reporter=html
-                '''
+                           npm install serve
+                           node_modules/.bin/serve -s build &
+                           sleep 10
+                           npx playwright test --reporter=html
+                        '''
                     }
                     post {
                         always {
@@ -78,6 +81,7 @@ pipeline {
                 docker {
                     image 'node:18-alpine'
                     reuseNode true
+                    retries 2 // Add retries to handle potential restarts
                 }
             }
             steps {
