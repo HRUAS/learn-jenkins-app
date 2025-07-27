@@ -12,7 +12,6 @@ pipeline {
                 docker {
                     image 'node:18-alpine'
                     reuseNode true
-                    retries 2 // Add retries to handle potential restarts
                 }
             }
             steps {
@@ -34,7 +33,6 @@ pipeline {
                         docker {
                             image 'node:18-alpine'
                             reuseNode true
-                            retries 2 // Add retries to handle potential restarts
                         }
                     }
                     steps {
@@ -56,7 +54,6 @@ pipeline {
                         docker {
                             image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                             reuseNode true
-                            retries 2 // Add retries to handle potential restarts
                         }
                     }
                     steps {
@@ -81,7 +78,6 @@ pipeline {
                 docker {
                     image 'node:18-alpine'
                     reuseNode true
-                    retries 2 // Add retries to handle potential restarts
                 }
             }
             steps {
