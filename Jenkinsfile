@@ -72,29 +72,6 @@ pipeline {
             }
         }
 
-        stage('Deploy Stagging') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                   npm install netlify-cli node-jq
-                   node_modules/.bin/netlify --version
-                   echo "Deploying to staging change netlify site id is : $NETLIFY_SITE_ID"
-                   node_modules/.bin/netlify status
-                   ls -la
-                   node_modules/.bin/netlify deploy --dir=build --json > deploy_output.json
-                '''
-                script {
-                    env.STAGING_URL = sh(script: "node_modules/.bin//node-jq -r '.deploy_url' deploy_output.json",
-                returnStdout: true)
-                }
-            }
-        }
-
         stage('Staging E2E') {
                     agent {
                         docker {
@@ -103,12 +80,19 @@ pipeline {
                         }
                     }
 
-                    environment {
-                        CI_ENVIRONMENT_URL = "${env.STAGING_URL}"
-                    }
+                    // environment {
+                    //     CI_ENVIRONMENT_URL = "${env.STAGING_URL}"
+                    // }
 
                     steps {
                         sh '''
+                           npm install netlify-cli node-jq
+                           node_modules/.bin/netlify --version
+                           echo "Deploying to staging change netlify site id is : $NETLIFY_SITE_ID"
+                           node_modules/.bin/netlify status
+                           ls -la
+                           node_modules/.bin/netlify deploy --dir=build --json > deploy_output.json
+                           CI_ENVIRONMENT_URL=$(node_modules/.bin//node-jq -r '.deploy_url' deploy_output.json)
                            npx playwright test --reporter=html
                         '''
                     }
