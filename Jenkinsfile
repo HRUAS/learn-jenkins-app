@@ -6,7 +6,6 @@ pipeline {
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
     }
     stages {
-        
         stage('Build') {
             agent {
                 docker {
@@ -99,7 +98,8 @@ pipeline {
                             reuseNode true
                         }
                     }
-                    environment{
+
+                    environment {
                         CI_ENVIRONMENT_URL = 'https://akhil433.netlify.app'
                     }
 
@@ -113,6 +113,6 @@ pipeline {
                             publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'PlayWrite E2E Report', reportTitles: '', useWrapperFileDirectly: true])
                         }
                     }
-                }
+        }
     }
 }
