@@ -19,8 +19,10 @@ test('has expected app version', async ({ page }) => {
   await page.goto('/');
 
   const expectedAppVersion = process.env.REACT_APP_VERSION ? process.env.REACT_APP_VERSION : '1';
-
+  console.log("===================================================")
+  console.log(process.env.REACT_APP_VERSION)
   console.log(expectedAppVersion);
+  console.log("===================================================")
 
   const isVisible = await page.locator(`p:has-text("Application version: ${expectedAppVersion}")`).isVisible();
   expect(isVisible).toBeTruthy();
