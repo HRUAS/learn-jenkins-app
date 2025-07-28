@@ -7,30 +7,31 @@ pipeline {
         REACT_APP_VERSION = "1.0.$BUILD_ID"
     }
     stages {
-        stage('docker') {
-            steps {
-                sh 'docker build -t my-playright .'
-            }
-        }
 
-        stage('Build') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                   ls -la
-                   node --version
-                   npm --version
-                   npm ci
-                   npm run build
-                   ls -la
-                '''
-            }
-        }
+        // stage('docker') {
+        //     steps {
+        //         sh 'docker build -t my-playright .'
+        //     }
+        // }
+
+        // stage('Build') {
+        //     agent {
+        //         docker {
+        //             image 'node:18-alpine'
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         sh '''
+        //            ls -la
+        //            node --version
+        //            npm --version
+        //            npm ci
+        //            npm run build
+        //            ls -la
+        //         '''
+        //     }
+        // }
 
         stage('run Tests') {
             parallel {
