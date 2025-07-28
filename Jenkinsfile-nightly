@@ -2,18 +2,9 @@ pipeline {
     agent any
 
     stages {
-        stage('Docker Build') {
+        stage('docker') {
             steps {
-                script {
-                    try {
-                        sh 'docker build -t my-playright .'
-                    } catch (Exception e) {
-                        echo "Docker build failed: ${e.message}"
-                        // Optionally print the npm debug log from the container
-                        sh 'docker run --rm my-playright cat /root/.npm/_logs/*-debug-0.log || true'
-                        error "Build failed"
-                    }
-                }
+                sh 'docker build -t my-playright .'
             }
         }
     }
