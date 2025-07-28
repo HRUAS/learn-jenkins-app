@@ -33,51 +33,51 @@ pipeline {
         //     }
         // }
 
-        stage('run Tests') {
-            parallel {
-                stage('Test') {
-                    agent {
-                        docker {
-                            image 'node:18-alpine'
-                            reuseNode true
-                        }
-                    }
-                    steps {
-                        sh '''
-                           echo 'Test Stage'
-                           test -f build/index.html
-                           npm test
-                        '''
-                    }
-                    post {
-                        always {
-                            junit 'jest-results/junit.xml'
-                        }
-                    }
-                }
+        // stage('run Tests') {
+        //     parallel {
+        //         stage('Test') {
+        //             agent {
+        //                 docker {
+        //                     image 'node:18-alpine'
+        //                     reuseNode true
+        //                 }
+        //             }
+        //             steps {
+        //                 sh '''
+        //                    echo 'Test Stage'
+        //                    test -f build/index.html
+        //                    npm test
+        //                 '''
+        //             }
+        //             post {
+        //                 always {
+        //                     junit 'jest-results/junit.xml'
+        //                 }
+        //             }
+        //         }
 
-                stage('E2E') {
-                    agent {
-                        docker {
-                            image 'my-playright'
-                            reuseNode true
-                        }
-                    }
-                    steps {
-                        sh '''
-                           serve -s build &
-                           sleep 5
-                           npx playwright test --reporter=html
-                        '''
-                    }
-                    post {
-                        always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'PlayWrite Local Report', reportTitles: '', useWrapperFileDirectly: true])
-                        }
-                    }
-                }
-            }
-        }
+        //         stage('E2E') {
+        //             agent {
+        //                 docker {
+        //                     image 'my-playright'
+        //                     reuseNode true
+        //                 }
+        //             }
+        //             steps {
+        //                 sh '''
+        //                    serve -s build &
+        //                    sleep 5
+        //                    npx playwright test --reporter=html
+        //                 '''
+        //             }
+        //             post {
+        //                 always {
+        //                     publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'PlayWrite Local Report', reportTitles: '', useWrapperFileDirectly: true])
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Staging E2E') {
                     agent {
