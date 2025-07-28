@@ -80,9 +80,9 @@ pipeline {
                         }
                     }
 
-                    // environment {
-                    //     CI_ENVIRONMENT_URL = "${env.STAGING_URL}"
-                    // }
+                    environment {
+                        CI_ENVIRONMENT_URL = "staging_url"
+                    }
 
                     steps {
                         sh '''
