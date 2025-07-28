@@ -8,11 +8,12 @@ pipeline {
     }
     stages {
 
-        stage{'docker'}{
+        stage()'docker'){
             steps{
                 sh 'docker build -t my-playright .'
             }
         }
+
         stage('Build') {
             agent {
                 docker {
