@@ -7,9 +7,8 @@ pipeline {
         REACT_APP_VERSION = "1.0.$BUILD_ID"
     }
     stages {
-
-        stage()'docker'){
-            steps{
+        stage('docker') {
+            steps {
                 sh 'docker build -t my-playright .'
             }
         }
@@ -89,7 +88,7 @@ pipeline {
                     }
 
                     environment {
-                        CI_ENVIRONMENT_URL = "staging_url"
+                        CI_ENVIRONMENT_URL = 'staging_url'
                     }
 
                     steps {
