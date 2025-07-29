@@ -22,6 +22,7 @@ pipeline {
                 aws s3 ls
                 echo "hello S3"> test.txt 
                 aws s3 cp test.txt s3://akhil433-bucket-20250709/test2.txt
+                aws s3 ls s3://akhil433-bucket-20250709
                 '''
                 }
             }
