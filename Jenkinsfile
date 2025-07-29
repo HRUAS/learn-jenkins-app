@@ -47,6 +47,7 @@ pipeline {
                     sh '''
                 aws --version
                 aws s3 sync build $AWS_S3_BUCKET
+                aws s3 ls $AWS_S3_BUCKET
                 '''
                 }
             }
