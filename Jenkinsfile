@@ -8,21 +8,22 @@ pipeline {
         REACT_APP_VERSION = "1.0.$BUILD_ID"
     }
     stages {
-
-        stage('AWS'){
-            agent{
-                docker{
+        stage('AWS') {
+            agent {
+                docker {
                     image 'amazon/aws-cli'
                     args '--entrypoint=""'
                 }
             }
-            steps{
+            steps {
                 withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                sh '''
+                    sh '''
                 aws --version
                 aws s3 ls
-                '''                }
-                
+                echo "hello S3"> test.txt 
+                aws s3 cp test.txt s3://akhil433-bucket-20250709/test2.txt
+                '''
+                }
             }
         }
 
