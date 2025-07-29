@@ -4,7 +4,7 @@ pipeline {
     environment {
         NETLIFY_SITE_ID = 'd04d85b1-a25f-43ca-a9ff-b21d32a04c64'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
-
+        AWS_S3_BUCKET = 's3://akhil433-bucket-20250709'
         REACT_APP_VERSION = "1.0.$BUILD_ID"
     }
     stages {
@@ -21,8 +21,8 @@ pipeline {
                 aws --version
                 aws s3 ls
                 echo "hello S3"> test.txt 
-                aws s3 cp test.txt s3://akhil433-bucket-20250709/test2.txt
-                aws s3 ls s3://akhil433-bucket-20250709
+                aws s3 cp test.txt $AWS_S3_BUCKET/test2.txt
+                aws s3 ls $AWS_S3_BUCKET
                 '''
                 }
             }
