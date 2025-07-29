@@ -8,6 +8,19 @@ pipeline {
     }
     stages {
 
+        stage('AWS'){
+            agent{
+                docker{
+                    image 'docker pull amazon/aws-cli'
+                }
+            }
+            steps{
+                sh '''
+                aws --version
+                '''
+            }
+        }
+
         // stage('docker') {
         //     steps {
         //         sh 'docker build -t my-playright .'
