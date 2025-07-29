@@ -8,7 +8,34 @@ pipeline {
         REACT_APP_VERSION = "1.0.$BUILD_ID"
     }
     stages {
-        stage('AWS') {
+       
+
+        // stage('docker') {
+        //     steps {
+        //         sh 'docker build -t my-playright .'
+        //     }
+        // }
+
+        stage('Build') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                   ls -la
+                   node --version
+                   npm --version
+                   npm ci
+                   npm run build
+                   ls -la
+                '''
+            }
+        }
+
+         stage('AWS') {
             agent {
                 docker {
                     image 'amazon/aws-cli'
@@ -19,39 +46,11 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                     sh '''
                 aws --version
-                aws s3 ls
-                echo "hello S3"> test.txt 
-                aws s3 cp test.txt $AWS_S3_BUCKET/test2.txt
-                aws s3 ls $AWS_S3_BUCKET
+                aws s3 sync build $AWS_S3_BUCKET
                 '''
                 }
             }
         }
-
-        // stage('docker') {
-        //     steps {
-        //         sh 'docker build -t my-playright .'
-        //     }
-        // }
-
-        // stage('Build') {
-        //     agent {
-        //         docker {
-        //             image 'node:18-alpine'
-        //             reuseNode true
-        //         }
-        //     }
-        //     steps {
-        //         sh '''
-        //            ls -la
-        //            node --version
-        //            npm --version
-        //            npm ci
-        //            npm run build
-        //            ls -la
-        //         '''
-        //     }
-        // }
 
         // stage('run Tests') {
         //     parallel {
