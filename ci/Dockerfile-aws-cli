@@ -1,3 +1,16 @@
 FROM amazonlinux:2
-RUN yum install -y amazon-linux-extras aws-cli jq
-RUN amazon-linux-extras install docker
+
+# Update packages and install dependencies
+RUN yum update -y && \
+    yum install -y amazon-linux-extras jq unzip && \
+    amazon-linux-extras install docker -y && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm -f awscliv2.zip && \
+    rm -rf aws
+
+# Verify installations
+RUN aws --version && \
+    docker --version && \
+    jq --version
