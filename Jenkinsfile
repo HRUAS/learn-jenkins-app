@@ -12,7 +12,6 @@ pipeline {
         AWS_ECS_TASK_DEFINITION = 'LearnJenkinsApp-TaskDefinition-Prod'
     }
     stages {
-
         // stage('docker') {
         //     steps {
         //         sh 'docker build -t my-playright .'
@@ -41,41 +40,39 @@ pipeline {
         stage('Build Docker Image') {
             agent {
                 docker {
-                    image 'amazonlinux:2'
+                    image 'my-aws-cli'
                     reuseNode true
                     args '-u root -v /var/run/docker.sock:/var/run/docker.sock --entrypoint=""'
                 }
             }
             steps {
                 sh '''
-                yum install -y amazon-linux-extras aws-cli
-                amazon-linux-extras install docker
                 docker build -t my-jenkins-app .
                 '''
             }
         }
 
-        // stage('AWS') {
-        //     agent {
-        //         docker {
-        //             image 'amazon/aws-cli'
-        //             args '-u root --entrypoint=""'
-        //             reuseNode true
-        //         }
-        //     }
-        //     steps {
-        //         withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-        //             sh '''
-        //         aws --version
-        //         yum install jq -y
-        //         LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://aws/task-definition.json | jq '.taskDefinition.revision')
-        //         echo "LATEST_TD_REVISION: $LATEST_TD_REVISION"
-        //         aws ecs update-service --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE --task-definition $AWS_ECS_TASK_DEFINITION:$LATEST_TD_REVISION
-        //         aws ecs wait services-stable --cluster $AWS_ECS_CLUSTER --services $AWS_ECS_SERVICE
-        //         '''
-        //         }
-        //     }
-        // }
+        stage('AWS') {
+            agent {
+                docker {
+                    image 'my-aws-cli'
+                    args '-u root --entrypoint=""'
+                    reuseNode true
+                }
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    sh '''
+                aws --version
+                yum install jq -y
+                LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://aws/task-definition.json | jq '.taskDefinition.revision')
+                echo "LATEST_TD_REVISION: $LATEST_TD_REVISION"
+                aws ecs update-service --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE --task-definition $AWS_ECS_TASK_DEFINITION:$LATEST_TD_REVISION
+                aws ecs wait services-stable --cluster $AWS_ECS_CLUSTER --services $AWS_ECS_SERVICE
+                '''
+                }
+            }
+        }
 
         // aws s3 sync build $AWS_S3_BUCKET
         // aws s3 ls $AWS_S3_BUCKET
