@@ -9,7 +9,6 @@ pipeline {
         REACT_APP_VERSION = "1.0.$BUILD_ID"
     }
     stages {
-       
 
         // stage('docker') {
         //     steps {
@@ -17,26 +16,26 @@ pipeline {
         //     }
         // }
 
-        stage('Build') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                   ls -la
-                   node --version
-                   npm --version
-                   npm ci
-                   npm run build
-                   ls -la
-                '''
-            }
-        }
+        // stage('Build') {
+        //     agent {
+        //         docker {
+        //             image 'node:18-alpine'
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         sh '''
+        //            ls -la
+        //            node --version
+        //            npm --version
+        //            npm ci
+        //            npm run build
+        //            ls -la
+        //         '''
+        //     }
+        // }
 
-         stage('AWS') {
+        stage('AWS') {
             agent {
                 docker {
                     image 'amazon/aws-cli'
@@ -49,6 +48,7 @@ pipeline {
                     sh '''
                 aws --version
                 aws ecs register-task-definition --cli-input-json file://aws/task-definition.json
+                aws ecs update-service --cluster gifted-shark-8tbu9g --service LearnJenkinsApp-TaskDefinition-Prod-service-m4wa1cnq --task-definition LearnJenkinsApp-TaskDefinition-Prod:2
                 '''
                 }
             }
@@ -155,24 +155,24 @@ pipeline {
         //                 CI_ENVIRONMENT_URL = 'https://akhil433.netlify.app'
         //             }
 
-        //             steps {
-        //                 sh '''
-        //                    netlify --version
-        //                    echo "deploy on prod change netlify site id is : $NETLIFY_SITE_ID"
-        //                    netlify status
-        //                    ls -la
-        //                    netlify deploy --dir=build --prod
-        //                    sleep 5
-        //                    npx playwright test --reporter=html
-        //                 '''
-        //             }
-        //             post {
-        //                 always {
-        //                     publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false,
-        //                     reportDir: 'playwright-report', reportFiles: 'index.html',
-        //                     reportName: 'PROD E2E Report', reportTitles: '', useWrapperFileDirectly: true])
-        //                 }
-        //             }
-        // }
+    //             steps {
+    //                 sh '''
+    //                    netlify --version
+    //                    echo "deploy on prod change netlify site id is : $NETLIFY_SITE_ID"
+    //                    netlify status
+    //                    ls -la
+    //                    netlify deploy --dir=build --prod
+    //                    sleep 5
+    //                    npx playwright test --reporter=html
+    //                 '''
+    //             }
+    //             post {
+    //                 always {
+    //                     publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false,
+    //                     reportDir: 'playwright-report', reportFiles: 'index.html',
+    //                     reportName: 'PROD E2E Report', reportTitles: '', useWrapperFileDirectly: true])
+    //                 }
+    //             }
+    // }
     }
 }
