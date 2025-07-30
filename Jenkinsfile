@@ -5,6 +5,7 @@ pipeline {
         NETLIFY_SITE_ID = 'd04d85b1-a25f-43ca-a9ff-b21d32a04c64'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
         AWS_S3_BUCKET = 's3://akhil433-bucket-20250709'
+        AWS_DEFAULT_REGION = 'us-east-1'
         REACT_APP_VERSION = "1.0.$BUILD_ID"
     }
     stages {
@@ -47,12 +48,14 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                     sh '''
                 aws --version
-                aws s3 sync build $AWS_S3_BUCKET
-                aws s3 ls $AWS_S3_BUCKET
+                aws ecs register-task-definition --cli-input-json file://aws/task-definition.json
                 '''
                 }
             }
         }
+
+        // aws s3 sync build $AWS_S3_BUCKET
+        // aws s3 ls $AWS_S3_BUCKET
 
         // stage('run Tests') {
         //     parallel {
@@ -100,37 +103,37 @@ pipeline {
         //     }
         // }
 
-        stage('Staging E2E') {
-                    agent {
-                        docker {
-                            image 'my-playright'
-                            reuseNode true
-                        }
-                    }
+        // stage('Staging E2E') {
+        //             agent {
+        //                 docker {
+        //                     image 'my-playright'
+        //                     reuseNode true
+        //                 }
+        //             }
 
-                    environment {
-                        CI_ENVIRONMENT_URL = 'staging_url'
-                    }
+        //             environment {
+        //                 CI_ENVIRONMENT_URL = 'staging_url'
+        //             }
 
-                    steps {
-                        sh '''
-                           netlify --version
-                           echo "Deploying to staging change netlify site id is : $NETLIFY_SITE_ID"
-                           netlify status
-                           ls -la
-                           netlify deploy --dir=build --json > deploy_output.json
-                           CI_ENVIRONMENT_URL=$(node-jq -r '.deploy_url' deploy_output.json)
-                           npx playwright test --reporter=html
-                        '''
-                    }
-                    post {
-                        always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false,
-                            reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Staging E2E Report',
-                            reportTitles: '', useWrapperFileDirectly: true])
-                        }
-                    }
-        }
+        //             steps {
+        //                 sh '''
+        //                    netlify --version
+        //                    echo "Deploying to staging change netlify site id is : $NETLIFY_SITE_ID"
+        //                    netlify status
+        //                    ls -la
+        //                    netlify deploy --dir=build --json > deploy_output.json
+        //                    CI_ENVIRONMENT_URL=$(node-jq -r '.deploy_url' deploy_output.json)
+        //                    npx playwright test --reporter=html
+        //                 '''
+        //             }
+        //             post {
+        //                 always {
+        //                     publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false,
+        //                     reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Staging E2E Report',
+        //                     reportTitles: '', useWrapperFileDirectly: true])
+        //                 }
+        //             }
+        // }
 
         // stage('approval') {
         //     steps {
@@ -140,36 +143,36 @@ pipeline {
         //     }
         // }
 
-        stage('PROD Deploy') {
-                    agent {
-                        docker {
-                            image 'my-playright'
-                            reuseNode true
-                        }
-                    }
+        // stage('PROD Deploy') {
+        //             agent {
+        //                 docker {
+        //                     image 'my-playright'
+        //                     reuseNode true
+        //                 }
+        //             }
 
-                    environment {
-                        CI_ENVIRONMENT_URL = 'https://akhil433.netlify.app'
-                    }
+        //             environment {
+        //                 CI_ENVIRONMENT_URL = 'https://akhil433.netlify.app'
+        //             }
 
-                    steps {
-                        sh '''
-                           netlify --version
-                           echo "deploy on prod change netlify site id is : $NETLIFY_SITE_ID"
-                           netlify status
-                           ls -la
-                           netlify deploy --dir=build --prod
-                           sleep 5
-                           npx playwright test --reporter=html
-                        '''
-                    }
-                    post {
-                        always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false,
-                            reportDir: 'playwright-report', reportFiles: 'index.html',
-                            reportName: 'PROD E2E Report', reportTitles: '', useWrapperFileDirectly: true])
-                        }
-                    }
-        }
+        //             steps {
+        //                 sh '''
+        //                    netlify --version
+        //                    echo "deploy on prod change netlify site id is : $NETLIFY_SITE_ID"
+        //                    netlify status
+        //                    ls -la
+        //                    netlify deploy --dir=build --prod
+        //                    sleep 5
+        //                    npx playwright test --reporter=html
+        //                 '''
+        //             }
+        //             post {
+        //                 always {
+        //                     publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false,
+        //                     reportDir: 'playwright-report', reportFiles: 'index.html',
+        //                     reportName: 'PROD E2E Report', reportTitles: '', useWrapperFileDirectly: true])
+        //                 }
+        //             }
+        // }
     }
 }
