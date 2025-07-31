@@ -7,7 +7,7 @@ pipeline {
         AWS_S3_BUCKET = 's3://akhil433-bucket-20250709'
         AWS_DEFAULT_REGION = 'us-east-1'
         REACT_APP_VERSION = "1.0.$BUILD_ID"
-        APP_NAME = "leanjenkinsapp"
+        APP_NAME = 'leanjenkinsapp'
         AWS_ECS_CLUSTER = 'gifted-shark-8tbu9g'
         AWS_ECS_SERVICE = 'LearnJenkinsApp-TaskDefinition-Prod-service-m4wa1cnq'
         AWS_ECS_TASK_DEFINITION = 'LearnJenkinsApp-TaskDefinition-Prod'
@@ -48,11 +48,13 @@ pipeline {
                 }
             }
             steps {
-                sh '''
+                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    sh '''
                 docker build -t $AWS_DOCKER_REGISTORY/$APP_NAME:$REACT_APP_VERSION .
                 aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_DOCKER_REGISTORY
                 docker push $AWS_DOCKER_REGISTORY/$APP_NAME:$REACT_APP_VERSION
                 '''
+                }
             }
         }
 
