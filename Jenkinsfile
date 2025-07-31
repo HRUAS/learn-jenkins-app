@@ -7,6 +7,7 @@ pipeline {
         AWS_S3_BUCKET = 's3://akhil433-bucket-20250709'
         AWS_DEFAULT_REGION = 'us-east-1'
         REACT_APP_VERSION = "1.0.$BUILD_ID"
+        APP_NAME = "leanjenkinsapp"
         AWS_ECS_CLUSTER = 'gifted-shark-8tbu9g'
         AWS_ECS_SERVICE = 'LearnJenkinsApp-TaskDefinition-Prod-service-m4wa1cnq'
         AWS_ECS_TASK_DEFINITION = 'LearnJenkinsApp-TaskDefinition-Prod'
@@ -47,7 +48,7 @@ pipeline {
             }
             steps {
                 sh '''
-                docker build -t my-jenkins-app .
+                docker build -t $APP_NAME:$REACT_APP_VERSION .
                 '''
             }
         }
